@@ -14,8 +14,14 @@ const {
   GraphQLNonNull,
   GraphQLFloat,
 } = graphql;
+
 // const UserType = require('./UserScheme');
 // const RestaurantType = require('./RestaurantScheme');
+
+const PERMISSION_TYPE = {
+  USER_ROLE: 'USER_ROLE',
+  ADMIN_ROLE: 'ADMIN_ROLE',
+};
 
 const RestaurantType = new GraphQLObjectType({
   name: 'Restaurant',
@@ -48,11 +54,12 @@ const UserType = new GraphQLObjectType({
     name: { type: GraphQLString },
     password: { type: GraphQLString },
     email: { type: GraphQLString },
+    permission_role: { type: GraphQLString },
     restaurants: {
       type: new GraphQLList(RestaurantType),
       resolve(parent, args) {
         return Restaurant.find({ userId: parent.id });
-        //return _.filter(books, { authorId: parent.id });
+        //return _.filter(restaurants, { userId: parent.id });
       },
     },
   }),
@@ -200,6 +207,24 @@ const Mutation = new GraphQLObjectType({
           name: args.name,
           email: args.email,
           password: args.password,
+          permission_role: PERMISSION_TYPE.USER_ROLE,
+        });
+        return user.save();
+      },
+    },
+    addAdmin: {
+      type: UserType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parent, args) {
+        let user = new User({
+          name: args.name,
+          email: args.email,
+          password: args.password,
+          permission_role: PERMISSION_TYPE.ADMIN_ROLE,
         });
         return user.save();
       },

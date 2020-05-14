@@ -17,6 +17,7 @@ const RestaurantType = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
+    address: { type: GraphQLString },
     host: {
       type: UserType,
       resolve(parent, args) {
@@ -25,6 +26,13 @@ const RestaurantType = new GraphQLObjectType({
         //return _.find(authors, { id: parent.authorId });
       },
     },
+    // menus: {
+    //   type: new GraphQLList(MenuType),
+    //   resolve(parent, args) {
+    //     return Menu.find({ restaurantId: parent.id });
+    //     //return _.filter(books, { authorId: parent.id });
+    //   },
+    // },
   }),
 });
 

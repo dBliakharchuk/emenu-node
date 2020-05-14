@@ -1,0 +1,34 @@
+# GET http://localhost:4000/restaurants
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZGltYWtpc29AZ21haWwuY29tIiwidXNlcklkIjoiNWViODAzNjIxMmU3M2E0NGY4YmVjOWJiIiwiaWF0IjoxNTg5NDgwMjI5fQ.0snBu-HMZRBFYq_3I1IeFDrX5zyvOPQPTbruicj1aZs
+
+GET http://localhost:4000/restaurants
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRpbWFraXNvQGdtYWlsLmNvbSIsInVzZXJJZCI6IjVlYmQ5NGNkMzBkZGQyMjg4NDIyMGMzYyIsImlhdCI6MTU4OTQ4OTgyNSwiZXhwIjoxNTg5NDg5ODU1fQ.e2T0pYO4aIEBdUdJothV3QmvNhfFCpvE7PHTRPC2jhU
+
+
+###
+DELETE http://localhost:4001/logout 
+Content-Type: application/json
+
+{
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRpbWFraXNvQGdtYWlsLmNvbSIsInVzZXJJZCI6IjVlYmQ5NGNkMzBkZGQyMjg4NDIyMGMzYyIsImlhdCI6MTU4OTQ4OTc4OX0.uLhHYUqWd4HO3PSya8hiA7L8d0New0uBHjd6ZC8dF-0"
+}
+
+
+###
+
+POST http://localhost:4001/token 
+Content-Type: application/json
+
+{
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRpbWFraXNvQGdtYWlsLmNvbSIsInVzZXJJZCI6IjVlYmQ5NGNkMzBkZGQyMjg4NDIyMGMzYyIsImlhdCI6MTU4OTQ4OTc4OX0.uLhHYUqWd4HO3PSya8hiA7L8d0New0uBHjd6ZC8dF-0"
+}
+
+###
+
+POST http://localhost:4001/login
+Content-Type: application/json
+
+{
+    "email": "dimakiso@gmail.com",
+    "userId": "5ebd94cd30ddd22884220c3c"
+}

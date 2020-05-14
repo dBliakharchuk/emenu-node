@@ -9,7 +9,6 @@ const {
   GraphQLNonNull,
 } = graphql; //grab object from graphql
 const Restaurant = require('../models/restaurant');
-const User = require('../models/restaurant');
 const { RestaurantType } = require('./RestaurantScheme');
 
 const UserType = new GraphQLObjectType({
@@ -19,11 +18,12 @@ const UserType = new GraphQLObjectType({
     name: { type: GraphQLString },
     password: { type: GraphQLString },
     email: { type: GraphQLString },
+    permission_role: { type: GraphQLString },
     restaurants: {
       type: new GraphQLList(RestaurantType),
       resolve(parent, args) {
         return Restaurant.find({ userId: parent.id });
-        //return _.filter(books, { authorId: parent.id });
+        //return _.filter(restaurants, { userId: parent.id });
       },
     },
   }),
