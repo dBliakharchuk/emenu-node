@@ -15,13 +15,10 @@ const {
   GraphQLFloat,
 } = graphql;
 
+const { PERMISSION_TYPE } = require('../static/data');
+
 // const UserType = require('./UserScheme');
 // const RestaurantType = require('./RestaurantScheme');
-
-const PERMISSION_TYPE = {
-  USER_ROLE: 'USER_ROLE',
-  ADMIN_ROLE: 'ADMIN_ROLE',
-};
 
 const RestaurantType = new GraphQLObjectType({
   name: 'Restaurant',

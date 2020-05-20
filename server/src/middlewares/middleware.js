@@ -11,7 +11,7 @@ const errorHandler = (error, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   res.status(statusCode);
   res.json({
-    messsage: error.messsage,
+    // messsage: error.messsage,
     stack:
       process.env.NODE_ENV === 'production' ? 'Not this time' : error.stack,
   });
