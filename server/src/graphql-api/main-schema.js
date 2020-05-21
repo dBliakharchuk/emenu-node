@@ -1,9 +1,4 @@
 const graphql = require('graphql');
-const User = require('../models/user');
-const Restaurant = require('../models/restaurant');
-const Menu = require('../models/menu');
-const Category = require('../models/category');
-const Dish = require('../models/dish');
 const {
   GraphQLInt,
   GraphQLObjectType,
@@ -14,8 +9,19 @@ const {
   GraphQLNonNull,
   GraphQLFloat,
 } = graphql;
+const dishController = require('./controllers/dish-controller');
+const categoryController = require('./controllers/category-controller');
+const menuController = require('./controllers/menu-controller');
+const userController = require('./controllers/user-controller');
+const restaurantController = require('./controllers/restaurant-controller');
+const authController = require('./controllers/auth-controller');
 
 const { PERMISSION_TYPE } = require('../static/data');
+
+const {
+  checkAuthAndResolve,
+  checkScopeAndResolve,
+} = require('./resolvers/auth-resolvers');
 
 // const UserType = require('./UserScheme');
 // const RestaurantType = require('./RestaurantScheme');
@@ -30,15 +36,13 @@ const RestaurantType = new GraphQLObjectType({
       type: UserType,
       resolve(parent, args) {
         console.log(parent);
-        return User.findById(parent.userId);
-        //return _.find(authors, { id: parent.authorId });
+        return userController.getUserById(parent.userId);
       },
     },
     menus: {
       type: new GraphQLList(MenuType),
       resolve(parent, args) {
-        return Menu.find({ restaurantId: parent.id });
-        //return _.filter(books, { authorId: parent.id });
+        return menuController.getMenusFromRestaurant(parent.id);
       },
     },
   }),
@@ -55,8 +59,7 @@ const UserType = new GraphQLObjectType({
     restaurants: {
       type: new GraphQLList(RestaurantType),
       resolve(parent, args) {
-        return Restaurant.find({ userId: parent.id });
-        //return _.filter(restaurants, { userId: parent.id });
+        return restaurantController.getRestaurantByUserId(parent.id);
       },
     },
   }),
@@ -71,14 +74,13 @@ const MenuType = new GraphQLObjectType({
     restaurant: {
       type: RestaurantType,
       resolve(parent, args) {
-        return Restaurant.findById(parent.restaurantId);
+        return restaurantController.getRestaurantById(parent.restaurantId);
       },
     },
     categories: {
       type: new GraphQLList(CategoryType),
       resolve(parent, args) {
-        return Category.find({ menuId: parent.id });
-        //return _.filter(books, { authorId: parent.id });
+        return categoryController.getCategoriesByMenuId(parent.id);
       },
     },
   }),
@@ -93,14 +95,13 @@ const CategoryType = new GraphQLObjectType({
     menu: {
       type: MenuType,
       resolve(parent, args) {
-        return Category.findById(parent.menuId);
+        return menuController.getMenuById(parent.menuId);
       },
     },
     dishes: {
       type: new GraphQLList(DishType),
       resolve(parent, args) {
-        return Dish.find({ categoryId: parent.id });
-        //return _.filter(books, { authorId: parent.id });
+        return dishController.getDishesByCategoryId(parent.id);
       },
     },
   }),
@@ -117,7 +118,7 @@ const DishType = new GraphQLObjectType({
     category: {
       type: CategoryType,
       resolve(parent, args) {
-        return Dish.findById(parent.categoryId);
+        return dishController.getDishById(parent.categoryId);
       },
     },
     // ingredients: {
@@ -133,57 +134,58 @@ const DishType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
+    logoutUser: {
+      type: UserType,
+      resolve: (parent, _, context) => {
+        return authController.logoutUser(context);
+      },
+    },
     restaurant: {
-      //we gonna use it in query
       type: RestaurantType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        //code to get data from db / other source
-        return Restaurant.findById(args.id);
-        //return _.find(books, { id: args.id });
+        return restaurantController.getRestaurantById(args.id);
       },
     },
     user: {
       type: UserType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        return User.findById(args.id);
-        //return _.find(authors, { id: args.id });
+        return userController.getUserById(args.id);
       },
     },
     restaurants: {
       type: new GraphQLList(RestaurantType),
-      resolve(parent, args) {
-        return Restaurant.find({});
-        //return books;
+      resolve(parent, args, context) {
+        return checkScopeAndResolve(
+          context,
+          PERMISSION_TYPE.USER_ROLE,
+          restaurantController.getAllRestaurants
+        );
       },
     },
     users: {
       type: new GraphQLList(UserType),
-      resolve(parent, args) {
-        return User.find({});
-        //return authors;
+      resolve(parent, args, context) {
+        return checkAuthAndResolve(context, userController.getAllUsers);
       },
     },
     menus: {
       type: new GraphQLList(MenuType),
       resolve(parent, args) {
-        return Menu.find({});
-        //return books;
+        return menuController.getAllMenus();
       },
     },
     categories: {
       type: new GraphQLList(CategoryType),
       resolve(parent, args) {
-        return Category.find({});
-        //return books;
+        return categoryController.getAllCategories();
       },
     },
     dishes: {
       type: new GraphQLList(DishType),
       resolve(parent, args) {
-        return Dish.find({});
-        //return books;
+        return dishController.getAllDishes();
       },
     },
   },
@@ -192,6 +194,16 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
+    loginUser: {
+      type: UserType,
+      args: {
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: GraphQLString },
+      },
+      resolve: (parent, args, context) => {
+        return authController.loginUser(args, context);
+      },
+    },
     addUser: {
       type: UserType,
       args: {
@@ -200,13 +212,7 @@ const Mutation = new GraphQLObjectType({
         password: { type: new GraphQLNonNull(GraphQLString) },
       },
       resolve(parent, args) {
-        let user = new User({
-          name: args.name,
-          email: args.email,
-          password: args.password,
-          permission_role: PERMISSION_TYPE.USER_ROLE,
-        });
-        return user.save();
+        return userController.saveUser(args, PERMISSION_TYPE.USER_ROLE);
       },
     },
     addAdmin: {
@@ -217,13 +223,7 @@ const Mutation = new GraphQLObjectType({
         password: { type: new GraphQLNonNull(GraphQLString) },
       },
       resolve(parent, args) {
-        let user = new User({
-          name: args.name,
-          email: args.email,
-          password: args.password,
-          permission_role: PERMISSION_TYPE.ADMIN_ROLE,
-        });
-        return user.save();
+        return userController.saveUser(args, PERMISSION_TYPE.ADMIN_ROLE);
       },
     },
     addRestaurant: {
@@ -234,12 +234,7 @@ const Mutation = new GraphQLObjectType({
         userId: { type: GraphQLString },
       },
       resolve(parent, args) {
-        let restaurant = new Restaurant({
-          name: args.name,
-          address: args.address,
-          userId: args.userId,
-        });
-        return restaurant.save();
+        return restaurantController.saveRestaurant(args);
       },
     },
     addMenu: {
@@ -250,12 +245,7 @@ const Mutation = new GraphQLObjectType({
         restaurantId: { type: GraphQLString },
       },
       resolve(parent, args) {
-        let menu = new Menu({
-          name: args.name,
-          description: args.description,
-          restaurantId: args.restaurantId,
-        });
-        return menu.save();
+        return menuController.saveMenu(args);
       },
     },
     addCategory: {
@@ -266,12 +256,7 @@ const Mutation = new GraphQLObjectType({
         menuId: { type: GraphQLString },
       },
       resolve(parent, args) {
-        let category = new Category({
-          name: args.name,
-          description: args.description,
-          menuId: args.menuId,
-        });
-        return category.save();
+        return categoryController.saveCategory(args);
       },
     },
     addDish: {
@@ -284,14 +269,7 @@ const Mutation = new GraphQLObjectType({
         categoryId: { type: GraphQLString },
       },
       resolve(parent, args) {
-        let dish = new Dish({
-          name: args.name,
-          description: args.description,
-          price: args.price,
-          image: args.image,
-          categoryId: args.categoryId,
-        });
-        return dish.save();
+        return dishController.saveDish(args);
       },
     },
   },

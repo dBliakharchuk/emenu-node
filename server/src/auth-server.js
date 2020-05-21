@@ -1,36 +1,40 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const middleware = require('./middlewares/middleware');
-const graphqlHTTP = require('express-graphql');
-const schema = require('./schemes/main-schema');
 const getMongoConnection = require('./middlewares/mongodb-connection');
-const router = require('./routers/auth-router');
+const router = require('./rest-api/routers/auth-router');
 const cookieParser = require('cookie-parser');
 
 require('dotenv').config();
 
 const app = express();
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
+  next();
+});
+
 app.use(cookieParser());
 
 // Body Parser Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // Allow to use data from another server
-app.use(cors({ origin: process.env.CORS_ORIGIN_SERVER }));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN_SERVER,
+    credentials: true,
+  })
+);
 
 getMongoConnection();
 
 //REST API ROUTER
 app.use('/', router);
-
-app.use(
-  '/graphql',
-  graphqlHTTP({
-    schema, //schema: schema
-    graphiql: true,
-  })
-);
 
 // Handle unexpected url & errors
 app.use(middleware.onNotPageFound);

@@ -6,14 +6,6 @@ exports.isUserSignedIn = (req, res, next) => {
   if (req.user == null) {
     res.status(403);
     return res.send('You should to sign in first');
-  } else {
-  }
-};
-
-exports.authUser = (req, res, next) => {
-  if (req.user == null) {
-    req.status(403);
-    return res.send('You need to sign in!');
   }
   next();
 };
@@ -29,42 +21,60 @@ exports.authRole = (role) => {
 };
 
 exports.loginUser = async (req, res) => {
-  // Authenticate User
-
-  console.log(PERMISSION_TYPE.ADMIN_ROLE);
   const email = req.body.email;
   const password = req.body.password;
 
   let foundUser = null;
   await getUserByEmail(email, (user) => (foundUser = user));
 
+  if (!foundUser) {
+    res.status(403);
+    return res.send('You need to sign in!');
+  }
+
+  if (foundUser.password !== password) {
+    res.status(401);
+    return res.send('Credentials arent valid!');
+  }
   console.log(foundUser);
-  const user = {
+
+  const logedInUser = {
     email: foundUser.email,
     password: foundUser.password,
     _id: foundUser._id,
     permission_role: foundUser.permission_role,
   };
 
-  console.log('Data from POST req', user);
   // Add JWT to header of request
-  const accessToken = jwtController.generateaccessToken(user);
-  const refreshToken = jwtController.generaterefreshToken(user);
+  const accessToken = jwtController.generateaccessToken(logedInUser);
+  const refreshToken = jwtController.generaterefreshToken(logedInUser);
 
   // Save refresh token to storage of tokens
   jwtController.pushRefreshTokenToStorage(refreshToken);
 
-  // Save refreshToken into cookies
-  // ?Probably isnt good idia to it?
-  res.cookie('token', refreshToken, { httpOnly: true });
-  // Save accessToken to cookies
-  res.cookie('accessToken', accessToken, { httpOnly: true });
-  res.json({ accessToken: accessToken, refreshToken: refreshToken });
+  // Save refreshToken && accessToken into cookies
+  res.cookie('token', refreshToken, {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 31,
+  });
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 31,
+  });
+
+  console.log('Show cookies: ');
+  console.log(req.cookies);
+  res.send({
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+  });
 };
 
 exports.logoutUser = (req, res) => {
   res.clearCookie('token');
   res.clearCookie('accessToken');
+  res.clearCookie('access-token');
+  console.log(req.cookies);
   jwtController.removeRefreshTokenToStorage(req.body.token);
   res.sendStatus(204);
 };

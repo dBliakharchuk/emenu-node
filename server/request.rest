@@ -18,18 +18,18 @@ Content-Type: application/json
 #"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRpbWFraXNvQGdtYWlsLmNvbSIsInVzZXJJZCI6IjVlYmQ5NGNkMzBkZGQyMjg4NDIyMGMzYyIsImlhdCI6MTU4OTQ5MjQxOX0.SqO9j8fuTb3TsnsCK6eOT9lOBdkumawFVE6XFDVMoJI"
 #}
 
-
 ###
 GET http://localhost:4001/token 
 
 ###
+GET http://localhost:4001/login
 
+###
 POST http://localhost:4001/login
 Content-Type: application/json
 
 {
-    "email": "dimakiso1@gmail.com",
-    "password": "12345",
+    "email": "admin@gmail.com",
+    "password": "1234",
     "userId": "5ebd94cd30ddd22884220c3c"
 }
-

@@ -1,22 +1,21 @@
 const jwt = require('jsonwebtoken');
-const User = require('../../../models/user');
 const axios = require('axios');
 
 // Temp storage for refresh tokens
 let refreshTokens = [];
 
-exports.refreshAccessToken = (req, res) => {
+exports.refreshAccessToken = (context) => {
   // Get refresh token from cookies
-  // const refreshToken = req.cookies.token;
-  const refreshToken = req.body.token;
+  // const refreshToken = context.cookies.token;
+  const refreshToken = context.body.token;
 
-  if (refreshToken == null) return res.sendStatus(401);
-  if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
+  if (refreshToken == null) return context.res.sendStatus(401);
+  if (!refreshTokens.includes(refreshToken)) return context.res.sendStatus(403);
 
   // Encode refreshToken
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     // Set header on Forbidden in case of wrong secret key...
-    if (err) return res.sendStatus(403);
+    if (err) return context.res.sendStatus(403);
 
     // Get data from token
     const tempUser = {
@@ -29,7 +28,7 @@ exports.refreshAccessToken = (req, res) => {
     const accessToken = generateaccessToken(tempUser);
 
     // Save access token in cookies
-    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('accessToken', accessToken, { httpOnly: false });
     res.json({ accessToken: accessToken });
   });
 };
@@ -48,7 +47,7 @@ exports.authenticateToken = (req, res, next) => {
       return res.sendStatus(403);
     }
     req.user = user;
-    console.log('authenticateToken user: ', user);
+    console.log('authenticateToken: ', user);
     next();
   });
 };
