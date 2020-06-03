@@ -1,7 +1,4 @@
 # emenu-node
 
-## Creating crypto key with node
-
-require('crypto').randomBytes(64).toString('hex')
-"apollo-server-express": "^2.13.0",
-"express-graphql": "^0.9.0",
+## Abstract
+A prototype of Web application based on Node, Express, GraphQl, React, Redux technologies for restaurants creation and management online.

@@ -14,6 +14,18 @@ exports.checkAuthAndResolve = (contex, controller) => {
   return controller.apply(this, [decodedUser]);
 };
 
+exports.checkAuthFromReqAndResolve = (contex, accessToken, controller) => {
+  console.log('Request body', accessToken);
+  if (!accessToken) {
+    throw new AuthorizationError({
+      message: 'You must supply a JWT for authorization',
+    });
+  }
+
+  const decodedUser = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+  return controller.apply(this, [decodedUser]);
+};
+
 exports.checkScopeAndResolve = (
   context,
   expectedScope,

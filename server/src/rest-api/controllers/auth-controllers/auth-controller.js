@@ -1,6 +1,7 @@
 const { PERMISSION_TYPE } = require('../../../static/data');
 const jwtController = require('./jwt-controller');
 const User = require('../../../models/user');
+const { getUserByEmail } = require('../entity-controllers/user-controller');
 
 exports.isUserSignedIn = (req, res, next) => {
   if (req.user == null) {
@@ -23,6 +24,7 @@ exports.authRole = (role) => {
 exports.loginUser = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  console.log(req.body);
 
   let foundUser = null;
   await getUserByEmail(email, (user) => (foundUser = user));
@@ -66,7 +68,6 @@ exports.loginUser = async (req, res) => {
   console.log(req.cookies);
   res.send({
     accessToken: accessToken,
-    refreshToken: refreshToken,
   });
 };
 
@@ -78,13 +79,3 @@ exports.logoutUser = (req, res) => {
   jwtController.removeRefreshTokenToStorage(req.body.token);
   res.sendStatus(204);
 };
-
-async function getUserByEmail(userEmail, callback) {
-  await User.findOne({ email: userEmail }, (err, user) => {
-    if (err) {
-      console.log(`User with ${userEmail} not found!`);
-      return null;
-    }
-    callback(user);
-  });
-}

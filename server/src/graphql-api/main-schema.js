@@ -21,6 +21,7 @@ const { PERMISSION_TYPE } = require('../static/data');
 const {
   checkAuthAndResolve,
   checkScopeAndResolve,
+  checkAuthFromReqAndResolve,
 } = require('./resolvers/auth-resolvers');
 
 // const UserType = require('./UserScheme');
@@ -131,6 +132,13 @@ const DishType = new GraphQLObjectType({
   }),
 });
 
+const TokenType = new GraphQLObjectType({
+  name: 'Token',
+  fields: () => ({
+    accessToken: { type: GraphQLString },
+  }),
+});
+
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
@@ -194,8 +202,21 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
-    loginUser: {
+    getAccount: {
       type: UserType,
+      args: {
+        accessToken: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve: (_, args, context) => {
+        return checkAuthFromReqAndResolve(
+          context,
+          args.accessToken,
+          userController.getUserByToken
+        );
+      },
+    },
+    loginUser: {
+      type: TokenType,
       args: {
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: GraphQLString },

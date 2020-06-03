@@ -36,9 +36,27 @@ exports.refreshAccessToken = (req, res) => {
 
 // Authenticate if Access Token still valid
 // In possitive case return user data by request
-exports.authenticateToken = (req, res, next) => {
+exports.authenticateTokenFromCookies = (req, res, next) => {
   const token = req.cookies.accessToken;
   console.log('authenticateToken: ', token);
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      console.log('Token is expired or not valid: You need to sign in!');
+      return res.sendStatus(403);
+    }
+    req.user = user;
+    next();
+  });
+};
+
+exports.authenticateToken = (req, res, next) => {
+  // const token = req.body.accessToken;
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+  console.log('authenticateToken:', token);
 
   if (token == null) return res.sendStatus(401);
 

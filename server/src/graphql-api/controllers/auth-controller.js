@@ -53,9 +53,11 @@ exports.loginUser = async (userToLogin, context) => {
   });
 
   console.log('Show context.response: ');
-  console.log(context.cookies);
+  console.log('accessToken', accessToken);
 
-  return foundUser;
+  return {
+    accessToken: accessToken,
+  };
 };
 
 exports.logoutUser = (context) => {

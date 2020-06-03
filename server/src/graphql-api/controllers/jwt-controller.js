@@ -34,7 +34,7 @@ exports.refreshAccessToken = (context) => {
 };
 
 // Authenticate if Access Token still valid
-// In possitive case return user data by request
+// In possitive case return user data to request
 exports.authenticateToken = (req, res, next) => {
   const token = req.cookies.accessToken;
   console.log('authenticateToken: ', token);

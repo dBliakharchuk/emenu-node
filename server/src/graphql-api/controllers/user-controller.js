@@ -30,3 +30,11 @@ exports.saveUser = (user, permission) => {
   });
   return newUser.save();
 };
+
+exports.getUserByToken = async (decodedUser) => {
+  console.log('decodedUser:', decodedUser);
+  return await this.getUserByEmail(
+    decodedUser.email,
+    (user) => (foundUser = user)
+  );
+};

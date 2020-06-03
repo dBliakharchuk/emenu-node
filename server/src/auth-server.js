@@ -26,8 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 // Allow to use data from another server
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN_SERVER,
-    credentials: true,
+    origin: process.env.CORS_ORIGIN_CLIENT,
   })
 );
 

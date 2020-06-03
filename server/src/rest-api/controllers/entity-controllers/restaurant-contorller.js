@@ -45,6 +45,7 @@ exports.authDeleteRestaurant = (req, res, next) => {
 exports.getRestaurants = async (request, response) => {
   let restaurants = null;
   await getRestaurants((foundRestaurants) => (restaurants = foundRestaurants));
+  console.log('RESTAURANT: ', restaurants);
   response.json(
     restaurantPermission.scopedRestaurants(request.user, restaurants)
   );
