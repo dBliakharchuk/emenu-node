@@ -23,6 +23,17 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         loading: true,
       };
+    case REQUEST(ACTION_TYPES.CREATE_USER):
+      return {
+        ...state,
+        loading: true,
+      };
+    case FAILURE(ACTION_TYPES.CREATE_USER): {
+      return {
+        ...state,
+        errorMessage: action.error,
+      };
+    }
     case FAILURE(ACTION_TYPES.GET_USERS):
       return {
         ...state,
@@ -43,12 +54,13 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         user: action.response.data,
       };
-    case ACTION_TYPES.CREATE_USER:
-    case ACTION_TYPES.UPDATE_USER:
+
+    case SUCCESS(ACTION_TYPES.CREATE_USER):
+    case SUCCESS(ACTION_TYPES.UPDATE_USER):
       return {
         ...state,
         updateSuccess: true,
-        user: action.payload.data,
+        user: action.response.data,
       };
     case ACTION_TYPES.DELETE_USER:
       return {

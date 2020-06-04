@@ -21,3 +21,15 @@ export const getUser = (userId) => async (dispatch) => {
     userId,
   });
 };
+
+export const createUser = (email, password, firstName, lastName) => async (
+  dispatch
+) => {
+  dispatch({
+    type: REQUEST(ACTION_TYPES.CREATE_USER),
+    email,
+    password,
+    firstName,
+    lastName,
+  });
+};

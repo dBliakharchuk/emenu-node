@@ -1,7 +1,5 @@
 import axios from 'axios';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 import { logoutUser, loginUser, getAccount } from './queries/auth-queries';
-import { graphql } from 'react-apollo';
 
 // import { REQUEST, SUCCESS, FAILURE } from '../action-type';
 

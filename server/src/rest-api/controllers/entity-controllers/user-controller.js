@@ -1,4 +1,5 @@
 const User = require('../../../models/user');
+const { PERMISSION_TYPE } = require('../../../static/data');
 
 exports.getUsers = (request, resonse) => {
   User.find({}, (err, users) => {
@@ -27,4 +28,22 @@ exports.getUserByEmail = async (userEmail, callback) => {
     }
     callback(user);
   });
+};
+
+exports.createUser = async (request, response) => {
+  const newUser = new User({
+    name: `${request.body.firstName} ${request.body.lastName}`,
+    email: request.body.email,
+    password: request.body.password,
+    permission_role: PERMISSION_TYPE.USER_ROLE,
+  });
+  await newUser
+    .save()
+    .then((result) => {
+      response.status(200);
+      response.json(result);
+    })
+    .catch(() => {
+      response.status(400);
+    });
 };

@@ -5,6 +5,16 @@ GET http://localhost:4000/
 GET http://localhost:4000/restaurants
 
 ###
+POST http://localhost:4000/users
+Content-Type: application/json
+
+{
+    "email": "new1@gmail.com",
+    "password": "1234",
+    "lastName": "Bliakharchuk"
+}
+
+###
 DELETE http://localhost:4000/restaurants/5ec47477b8bde7bae245eb06
 
 ###

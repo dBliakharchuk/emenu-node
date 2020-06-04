@@ -23,3 +23,20 @@ export const getUserService = async (request) => {
   console.log('getUserService: ', result);
   return result;
 };
+
+export const createUserService = async (request) => {
+  const reqUrl = `${apiUrl}/users`;
+  const result = await axios({
+    method: 'post',
+    url: reqUrl,
+    data: {
+      email: request.email,
+      password: request.password,
+      firstName: request.firstName,
+      lastName: request.lastName,
+    },
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  return result;
+};

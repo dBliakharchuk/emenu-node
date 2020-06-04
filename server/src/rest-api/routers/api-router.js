@@ -8,6 +8,7 @@ const jwtController = require('../controllers/auth-controllers/jwt-controller');
 const { PERMISSION_TYPE } = require('../../static/data');
 
 // User router
+router.post('/users', userController.createUser);
 router.get('/', homeController.loadHomePage);
 
 // router.get(

@@ -1,5 +1,5 @@
 import { loginUser, getSession, logoutUser } from '../auth-saga';
-import { takeLatest, put, takeEvery } from 'redux-saga/effects';
+import { takeLatest } from 'redux-saga/effects';
 
 import { ACTION_TYPES } from '../../actions/auth-action';
 import { REQUEST } from '../../utils/create-action-type';

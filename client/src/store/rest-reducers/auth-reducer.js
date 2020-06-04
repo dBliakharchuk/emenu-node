@@ -2,6 +2,7 @@ import { SUCCESS, FAILURE, REQUEST } from '../utils/create-action-type';
 import { ACTION_TYPES } from '../actions/auth-action';
 
 const initialState = {
+  showModalLogin: true,
   loading: false,
   isAuthenticated: false,
   loginSuccess: false,
@@ -17,14 +18,14 @@ export const authReducer = (state = initialState, action) => {
     case REQUEST(ACTION_TYPES.GET_SESSION): {
       return {
         loading: true,
+        showModalLogin: true,
       };
     }
     case REQUEST(ACTION_TYPES.LOGIN):
       return {
         ...state,
         loading: false,
-        loginError: false,
-        loginSuccess: true,
+        showModalLogin: true,
       };
     case REQUEST(ACTION_TYPES.LOGOUT):
       return {
@@ -59,10 +60,12 @@ export const authReducer = (state = initialState, action) => {
         loading: false,
         loginError: false,
         loginSuccess: true,
+        showModalLogin: false,
       };
     case SUCCESS(ACTION_TYPES.LOGOUT):
       return {
         ...initialState,
+        showModalLogin: true,
       };
     default:
       return state;

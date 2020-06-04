@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   loginUser,
   logoutUser,
@@ -17,17 +18,24 @@ export const InitPage = (props) => {
     const password = '1234';
     // props.logoutUser();
 
-    props.loginUser(email, password);
-    props.getSession();
-    props.getUsers();
-    props.getRestaurants();
+    // props.loginUser(email, password);
+    // props.getSession();
+    // props.getUsers();
+    // props.getRestaurants();
 
-    props.getUser('5ebd94cd30ddd22884220c3c');
+    // props.getUser('5ebd94cd30ddd22884220c3c');
   }, []);
 
-  const { account } = props;
   console.log(props);
-  return <div>Init Page</div>;
+  return (
+    <div>
+      Init Page
+      <br />
+      <Link to="/login">Login</Link>
+      <br />
+      <Link to="/register">Registration</Link>
+    </div>
+  );
 };
 
 const mapStateToProps = ({

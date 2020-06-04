@@ -8,6 +8,7 @@ export const ACTION_TYPES = {
 
 // Actions
 export const getSession = () => async (dispatch) => {
+  console.log('getSession REQUEST!!!!!!!!');
   await dispatch({
     type: REQUEST(ACTION_TYPES.GET_SESSION),
   });
