@@ -1,28 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
 import Routes from './routes';
 import { ApolloProvider } from 'react-apollo';
 import ApolloClient from 'apollo-boost';
 
+import { getSession } from './store/actions/auth-action';
+
+import { Header } from './modules/header/header';
+
 // Apollo client setup
 const client = new ApolloClient({
   uri: 'http://localhost:4002/graphql',
 });
 
-const App = () => {
+const App = ({ getSession, authorization }) => {
+  useEffect(() => {
+    getSession();
+  }, [getSession]);
+
   return (
     <ApolloProvider client={client}>
       <Router>
         <div className="App">
-          <header className="App-header">
-            <p>Outside of router</p>
-            <Routes />
-          </header>
+          <Header isAuthenticated={authorization.isAuthenticated} />
+          <Routes />
         </div>
       </Router>
     </ApolloProvider>
   );
 };
 
-export default App;
+const mapStateToProps = ({ restAuthReducer }) => {
+  return {
+    authorization: restAuthReducer,
+  };
+};
+
+const mapDispatchToProps = {
+  getSession,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -36,6 +36,7 @@ export const authReducer = (state = initialState, action) => {
         ...initialState,
         loginError: true,
         errorMessage: action.response,
+        isAuthenticated: false,
       };
     case FAILURE(ACTION_TYPES.LOGIN):
       return {
@@ -47,7 +48,8 @@ export const authReducer = (state = initialState, action) => {
       const isAuthenticated =
         action.response &&
         action.response.data &&
-        action.response.data.authUser;
+        action.response.data.authUser &&
+        true;
       return {
         ...state,
         isAuthenticated,

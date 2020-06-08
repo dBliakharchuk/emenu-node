@@ -5,29 +5,27 @@ import { Redirect } from 'react-router-dom';
 import { LoginModal } from './login-modal';
 import { loginUser } from '../../store/actions/auth-action';
 
-const Login = (props) => {
-  const [showModal, setShowModal] = useState(
-    props.authorization.showModalLogin
-  );
+const Login = ({ authorization, loginUser }) => {
+  const [showModal, setShowModal] = useState(!authorization.isAuthenticated);
 
   const handleLogin = (email, password) => {
-    props.loginUser(email, password);
+    loginUser(email, password);
+    !authorization.loginError && handleClose();
   };
 
   const handleClose = () => {
     setShowModal(false);
   };
 
-  console.log(props);
-  return props.authorization.loginSuccess || !showModal ? (
-    <Redirect to={'/'} />
-  ) : (
+  return showModal && !authorization.isAuthenticated ? (
     <LoginModal
       showModal={showModal}
       handleLogin={handleLogin}
       handleClose={handleClose}
-      loginError={props.authorization.loginError}
+      loginError={authorization.loginError}
     ></LoginModal>
+  ) : (
+    <Redirect to={'/'} />
   );
 };
 

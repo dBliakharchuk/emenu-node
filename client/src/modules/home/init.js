@@ -1,39 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import {
-  loginUser,
-  logoutUser,
-  getSession,
-} from '../../store/actions/auth-action';
 
-import { getUsers, getUser } from '../../store/actions/user-action';
-import { getRestaurants } from '../../store/actions/restaurant-action';
+import { getUser } from '../../store/actions/user-action';
 
 export const InitPage = (props) => {
-  const [loggedUser, setLoggedUser] = useState({});
+  // const [loggedUser, setLoggedUser] = useState({});
 
   useEffect(() => {
-    const email = 'admin@gmail.com';
-    const password = '1234';
-    // props.logoutUser();
-
-    // props.loginUser(email, password);
-    // props.getSession();
-    // props.getUsers();
-    // props.getRestaurants();
-
     // props.getUser('5ebd94cd30ddd22884220c3c');
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   console.log(props);
   return (
     <div>
       Init Page
       <br />
-      <Link to="/login">Login</Link>
-      <br />
-      <Link to="/register">Registration</Link>
     </div>
   );
 };
@@ -53,11 +34,6 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = () => {
   return {
-    loginUser,
-    logoutUser,
-    getSession,
-    getUsers,
-    getRestaurants,
     getUser,
   };
 };

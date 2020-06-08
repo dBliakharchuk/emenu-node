@@ -12,7 +12,6 @@ export const getSession = () => async (dispatch) => {
   await dispatch({
     type: REQUEST(ACTION_TYPES.GET_SESSION),
   });
-  // console.log(getState());
 };
 
 export const loginUser = (email, password) => async (dispatch) => {
