@@ -10,14 +10,7 @@ require('dotenv').config();
 
 const app = express();
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
-  next();
-});
+app.use(middleware.setReqHeader);
 
 app.use(cookieParser());
 
@@ -27,7 +20,10 @@ app.use(express.urlencoded({ extended: false }));
 // Allow to use data from another server
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN_CLIENT,
+    origin: [
+      process.env.CORS_ORIGIN_CLIENT,
+      process.env.CORS_ORIGIN_WEBPACK_CLIENT,
+    ],
   })
 );
 

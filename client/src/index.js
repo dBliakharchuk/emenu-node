@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -31,3 +32,5 @@ const render = (Component) =>
   );
 
 render(App);
+
+module.hot.accept();
